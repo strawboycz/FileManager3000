@@ -16,7 +16,7 @@ namespace FileManager3000
 						string directoryPath;
 						do
 						{
-								directoryPath = ReadValue("Directory", @"C:/Windows/System32/");
+								directoryPath = ReadValue("Directory", "C:\\Windows\\System32");
 								if (!Directory.Exists(directoryPath) && directoryPath == null)
 								{
 										Console.WriteLine($"Directory {directoryPath} does not exist");
@@ -26,30 +26,35 @@ namespace FileManager3000
 						var selectedExtensions = ReadValue("File extensions", "All extesions");
 						if (selectedExtensions == "All extensions")
 						{
-							selectedExtensions = null;
-
+								selectedExtensions = "";
 						}
-						var extensions = selectedExtensions.Split(';');
-
+						List<string> extensions = selectedExtensions.Split(';').ToList();
 
 						extensions.Select(x => x.Trim()).ToList();
 
 
 						var files = Directory.GetFiles(directoryPath);
 						var fileInfos = files.Select(x => new FileInfo(x)).ToList();
+						//C:\Users\Mirek\Documents
+						List<FileInfo> selectedExtensionFilenames = new List<FileInfo>();
+						if (selectedExtensions != "")
+						{
+								extensions.ForEach(extension =>
+									selectedExtensionFilenames.AddRange(fileInfos.Where(x => x.Extension == $"{extension}")
+										.ToList()));
+						}
+						else
+						{
+							selectedExtensionFilenames.AddRange(fileInfos.ToList());
+						}
 
 
-						var totalSize = fileInfos.Sum(x => x.Length);
-						var avgSize = fileInfos.Average(x => x.Length);
-						Console.WriteLine($"Total size: {totalSize / 1024 / 1024}MB, average size: {avgSize / 1024 / 1024}MB");
-						var onlySelectedExtensionFilenames = fileInfos.Where(x => x.Extension == $"{extensions}")
-								.Select(y => y.FullName).ToList();
+						var selectedExtensionsSum = selectedExtensionFilenames.Sum(x => x.Length);
+						var selectedExtensionsAvg = selectedExtensionFilenames.Average(x => x.Length);
 
-						var onlySelectedExtensionsSum = onlySelectedExtensionFilenames.Select(x => new FileInfo(x)).Sum(x => x.Length);
+						selectedExtensionFilenames.ForEach(x => Console.WriteLine(x));
 
-						onlySelectedExtensionFilenames.ForEach(x => Console.WriteLine(x));
-
-						Console.WriteLine($"Total size of selected files is: {onlySelectedExtensionsSum}");
+						Console.WriteLine($"Total size: {selectedExtensionsSum / 1024 / 1024}MB, average size: {Math.Round(selectedExtensionsAvg / 1024 / 1024)}MB");
 
 
 
