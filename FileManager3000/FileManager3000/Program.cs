@@ -11,7 +11,16 @@ namespace FileManager3000
 				static void Main(string[] args)
 				{
 						Console.WriteLine("FILE MANAGER 3000");
-						var directoryPath = ReadValue("Directory", "C:\\Windows\\System32");
+						string directoryPath;
+						do
+						{
+							directoryPath = ReadValue("Directory", "C:\\Windows\\System32");
+							if (!Directory.Exists(directoryPath))
+							{
+								Console.WriteLine($"Directory {directoryPath} does not exist");
+							}
+						} while (!Directory.Exists(directoryPath));
+						
 
 						var files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.System));
 						var fileInfos  = files.Select(x=> new FileInfo(x)).ToList();
