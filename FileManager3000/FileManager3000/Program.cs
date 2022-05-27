@@ -12,11 +12,11 @@ namespace FileManager3000
 		{
 				static void Main(string[] args)
 				{
-						Console.WriteLine("FILE MANAGER 3000");
+					Console.WriteLine("FILE MANAGER 3000");
 						string directoryPath;
 						do
 						{
-								directoryPath = ReadValue("Directory", "C:\\Windows\\System32");
+								directoryPath = ReadValue("Directory", Environment.GetFolderPath(Environment.SpecialFolder.System));
 								if (!Directory.Exists(directoryPath) && directoryPath == null)
 								{
 										Console.WriteLine($"Directory {directoryPath} does not exist");
@@ -35,7 +35,7 @@ namespace FileManager3000
 
 						var files = Directory.GetFiles(directoryPath);
 						var fileInfos = files.Select(x => new FileInfo(x)).ToList();
-						//C:\Users\Mirek\Documents
+
 						List<FileInfo> selectedExtensionFilenames = new List<FileInfo>();
 						if (selectedExtensions != "")
 						{
