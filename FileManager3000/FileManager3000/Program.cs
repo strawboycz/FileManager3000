@@ -30,29 +30,29 @@ namespace FileManager3000
 						}
 						List<string> extensions = selectedExtensions.Split(';').ToList();
 
-						extensions.Select(x => x.Trim()).ToList();
+						extensions = extensions.Select(x => x.Trim()).ToList();
 
 
 						var files = Directory.GetFiles(directoryPath);
 						var fileInfos = files.Select(x => new FileInfo(x)).ToList();
 
-						List<FileInfo> selectedExtensionFilenames = new List<FileInfo>();
+						List<FileInfo> selectedExtensionFiles = new List<FileInfo>();
 						if (selectedExtensions != "")
 						{
 								extensions.ForEach(extension =>
-									selectedExtensionFilenames.AddRange(fileInfos.Where(x => x.Extension == $"{extension}")
+									selectedExtensionFiles.AddRange(fileInfos.Where(x => x.Extension == $"{extension}")
 										.ToList()));
 						}
 						else
 						{
-							selectedExtensionFilenames.AddRange(fileInfos.ToList());
+							selectedExtensionFiles.AddRange(fileInfos.ToList());
 						}
 
 
-						var selectedExtensionsSum = selectedExtensionFilenames.Sum(x => x.Length);
-						var selectedExtensionsAvg = selectedExtensionFilenames.Average(x => x.Length);
+						var selectedExtensionsSum = selectedExtensionFiles.Sum(x => x.Length);
+						var selectedExtensionsAvg = selectedExtensionFiles.Average(x => x.Length);
 
-						selectedExtensionFilenames.ForEach(x => Console.WriteLine(x));
+						selectedExtensionFiles.ForEach(x => Console.WriteLine(x));
 
 						Console.WriteLine($"Total size: {selectedExtensionsSum / 1024 / 1024}MB, average size: {Math.Round(selectedExtensionsAvg / 1024 / 1024)}MB");
 
