@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Channels;
 using Microsoft.VisualBasic;
@@ -32,8 +33,19 @@ namespace FileManager3000
 
 						extensions = extensions.Select(x => x.Trim()).ToList();
 
+						List<ExtensionSpecs> specsOfExtensions = new List<ExtensionSpecs>();
 
-						var files = Directory.GetFiles(directoryPath);
+						extensions.ForEach(extension => specsOfExtensions.Add(new ExtensionSpecs(extension)));
+
+						string[] files;
+						if (directoryPath != "")
+						{
+							files = Directory.GetFiles(directoryPath);
+						}
+						else
+						{
+							files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.System));
+						}
 						var fileInfos = files.Select(x => new FileInfo(x)).ToList();
 
 						List<FileInfo> selectedExtensionFiles = new List<FileInfo>();
@@ -48,13 +60,18 @@ namespace FileManager3000
 							selectedExtensionFiles.AddRange(fileInfos.ToList());
 						}
 
+						specsOfExtensions.ForEach(spec => selectedExtensionFiles.Where(x => x.Extension == spec.Name).ToList().ForEach(file => spec.IncrementCount()));
+						specsOfExtensions.ForEach(spec => selectedExtensionFiles.Where(x => x.Extension == spec.Name).ToList().ForEach(file => spec.AddToSize((int)file.Length)));
 
-						var selectedExtensionsSum = selectedExtensionFiles.Sum(x => x.Length);
-						var selectedExtensionsAvg = selectedExtensionFiles.Average(x => x.Length);
+						var selectedExtensionsFilesSum = selectedExtensionFiles.Sum(x => x.Length);
+						var selectedExtensionsFilesCount = selectedExtensionFiles.Count;
 
 						selectedExtensionFiles.ForEach(x => Console.WriteLine(x));
+						Console.WriteLine();
+						specsOfExtensions.ForEach(spec => Console.WriteLine($"There is {spec.Count} files with {spec.Name} extension with total size of {spec.TotalSize /1024 /1024}MB"));
 
-						Console.WriteLine($"Total size: {selectedExtensionsSum / 1024 / 1024}MB, average size: {Math.Round(selectedExtensionsAvg / 1024 / 1024)}MB");
+
+						Console.WriteLine($"There is {selectedExtensionsFilesCount} total files and their size is: {selectedExtensionsFilesSum / 1024 / 1024}MB");
 
 
 
